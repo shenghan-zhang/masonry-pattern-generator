@@ -268,7 +268,7 @@ classdef Polygon
             else 
                 nb_p_min = 3;                 
             end
-            resampling_len = 0.05; 
+            resampling_len = 0.02;%for A-E 0.05; 
             nb_points_cal = floor(tot_length / resampling_len); 
             if (nb_points_cal < nb_p_min)
                 nb_points_cal = nb_p_min; 

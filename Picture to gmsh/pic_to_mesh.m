@@ -7,7 +7,7 @@ function main
 %%
 %name_spm = {'C1'}; 
 close all
-name_spm = {'TypoAN1', 'TypoEO1'};
+name_spm = {'INT2_eqv_t002'};%{'INT1','INT2','INT4'};% {'TypoAN1', 'TypoEO1'};
 scale_mesh = true; 
 add_boundary = 0; % 0 with adding any boundary condition 
                   % 1 with only one beam on top of the specimen
@@ -20,23 +20,25 @@ clearvars -except i_glb name_spm scale_mesh add_boundary
 clc;
 addpath(genpath('..'));
 %addpath('C:\Users\shzhang\Desktop\temp\')
-folder='.\..\Italian topologies\'; % Folder in which the picture is
+%folder='.\..\Italian topologies\'; % Folder in which the picture is
+folder = 'Z:\temp_pic\';
 file = sprintf('%s.png',name_spm{i_glb});
 filename = sprintf('%smy_mesh_from_pic_%s_2.geo',folder,name_spm{i_glb});
 
-Lx=1.0; % Length of the picture
-Ly=1.0; % Height of the picture
+Lx=0.74; % Length of the picture
+Ly=0.74; % Height of the picture
 resolution=8;
-dl=0.02;% If necessary, put non-zero value to add a mortar layer
+dl=0.01;% If necessary, put non-zero value to add a mortar layer
 min_vertices=5; % Minimum number of vertices by stone
-l_edges=0.05; % Length of the resampled edges of the polygons
+l_edges=0.02;%0.035;%0.05; % Length of the resampled edges of the polygons
 span=1; % Span of the averaging of the vertices coordinates during resampling
 
 epsilon=0.0000001; % Approximation constraint
 do_resample = true; 
 do_skip = true; 
 pic_type = 'bw';
-[polygons]=get_polygons_from_picture(folder,file,pic_type,Lx,Ly,dl); % Get the polygons from BW picture
+[polygons]=get_polygons_from_picture(folder,file,pic_type,Lx,Ly,dl,true,0.005); % Get the polygons from BW picture
+%[polygons]=get_polygons_from_picture(folder,file,pic_type,Lx,Ly,dl); % Get the polygons from BW picture
 % resampled_stones=resample_polygons(polygons,min_vertices,l_edges,span); % Resampling + Deleting redundant vertices
 colors=create_colors(2000);
 min_length_sieving = 0.007;
@@ -94,7 +96,8 @@ end
 
 %%
 
-findAndSetXYMM(resampled_stones)
+% findAndSetXYMM(resampled_stones)
+findAndSetXYMM(polygons)
 
 if (scale_mesh)
     
@@ -106,8 +109,8 @@ if (scale_mesh)
     for i = 1:length(resampled_stones)
         nb_stones = size(resampled_stones{i},1);
         for j = 1:nb_stones
-            resampled_stones{i}(j,1) = (resampled_stones{i}(j,1) - x_min)/(x_max - x_min); 
-            resampled_stones{i}(j,2) = (resampled_stones{i}(j,2) - y_min)/(y_max - y_min); 
+            resampled_stones{i}(j,1) = (resampled_stones{i}(j,1) - x_min)/(x_max - x_min)*Lx; 
+            resampled_stones{i}(j,2) = (resampled_stones{i}(j,2) - y_min)/(y_max - y_min)*Ly; 
         end 
     end
     findAndSetXYMM(resampled_stones)   
@@ -173,8 +176,8 @@ yd = box(:,2);
 
 %% print all the infomation
 
-mesh_size = 0.053;
-mesh_size_2 = 0.07;
+mesh_size = l_edges;%0.035;%0.053;
+mesh_size_2 = Lx/10;
 
 fileID = fopen(filename,'w');
 % input mesh information

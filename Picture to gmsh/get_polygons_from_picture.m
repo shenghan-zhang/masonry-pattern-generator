@@ -32,7 +32,13 @@ end
 
 nx=size(BW,2); % Number of pixels along x axis
 ny=size(BW,1); % Number of pixels along y axis
-BW = imcrop(BW, [0.02*nx 0.02*ny 0.96*nx 0.96*ny]);
+if exist('do_crop','var')
+    if do_crop
+        BW = imcrop(BW, [per_crop*nx per_crop*ny (1-per_crop)*nx (1-per_crop)*ny]);
+    end 
+else
+    BW = imcrop(BW, [0.02*nx 0.02*ny 0.96*nx 0.96*ny]);
+end
 nx=size(BW,2); % Number of pixels along x axis
 ny=size(BW,1); % Number of pixels along y axis
 sx=Lx/nx; % size of the pixels in x dimension

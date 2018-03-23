@@ -37,11 +37,16 @@ classdef PointAdded
           dis_merge = 0.02; 
           x_p = obj.coord(1);
           y_p = obj.coord(2);
-          x_min = min(points(:,2));
-          x_max = max(points(:,2));
-          y_min = min(points(:,3));
-          y_max = max(points(:,3));
-          obj = obj.setOnEdge([norm(x_min-x_p)<obj.tol, norm(x_max-x_p)<obj.tol, norm(y_min-y_p)<obj.tol, norm(y_max-y_p)<obj.tol]); 
+          xy_min_max = obj.setgetVar(); 
+          x_min = xy_min_max(1);
+          x_max = xy_min_max(2);
+          y_min = xy_min_max(3);
+          y_max = xy_min_max(4);         
+%           x_min = min(points(:,2));
+%           x_max = max(points(:,2));
+%           y_min = min(points(:,3));
+%           y_max = max(points(:,3));
+          obj = obj.setOnEdge([(norm(x_min-x_p)<obj.tol)&&((y_p>=y_min)&&(y_max>=y_p)), norm(x_max-x_p)<obj.tol&&((y_p>=y_min)&&(y_max>=y_p)), norm(y_min-y_p)<obj.tol&&((x_p>=x_min)&&(x_max>=x_p)), norm(y_max-y_p)<obj.tol&&((x_p>=x_min)&&(x_max>=x_p))]); 
           if obj.coincide 
               return
           end
@@ -54,7 +59,7 @@ classdef PointAdded
               obj = obj.setID(max_node_id+1); 
               % now fixed mesh size, to be improved
               points = [points
-                       obj.id obj.coord 1]; 
+                       obj.id obj.coord 3]; 
               return    
           end
           
@@ -135,4 +140,19 @@ classdef PointAdded
           end
       end
     end
+    methods (Static)
+         function out = setgetVar(points)
+             persistent x_min; 
+             persistent x_max;
+             persistent y_min;
+             persistent y_max;
+             if nargin
+                  x_min = min(points(:,2));
+                  x_max = max(points(:,2));
+                  y_min = min(points(:,3));
+                  y_max = max(points(:,3));
+             end
+             out = [x_min,x_max,y_min,y_max];
+         end
+   end    
 end
