@@ -1,15 +1,15 @@
 function main
 %name_spm = {'A1', 'A2', 'A3', 'B1', 'B2', 'B3', 'C1', 'C2', 'C3', 'D1', 'D2', 'D3', 'E1', 'E2', 'E3'};
-name_spm = {'INT2_'};
- 
+name_spm = {'INT2_eqv_t002_new,INT4_eqv_t002_new'};
+% name_spm = {'INT1_eqv_t002','INT2_eqv_t002','INT4_eqv_t002'};
 for i_glb = 1:length(name_spm)
 clearvars -except i_glb name_spm 
 folder_path = 'Z:\temp_pic\';
-do_scale = true;
+do_scale = false;
 loading_bracket_type = 'shear_comp'; % 'diag_comp', 'beam', 'shear_comp'
 
 file_name = sprintf('%smy_mesh_from_pic_%s_2.geo',folder_path,name_spm{i_glb})
-file_name_r = sprintf('%smy_mesh_from_pic_%s_sm.geo',folder_path,name_spm{i_glb});
+file_name_r = sprintf('%smy_mesh_from_pic_%s_ms1_sm.geo',folder_path,name_spm{i_glb});
 [points, lines, line_loops, plane_surfaces, physical_surfaces, physical_lines, mesh_sizes] = readFromGmshGeo(file_name);
 mesh_sizes('h3') = 0.2;
 %% find info about the mesh 
@@ -60,11 +60,11 @@ add_coords = [x_min, y_max-0.1*len_y
 [points, lines, line_loops, plane_surfaces, physical_surfaces, physical_lines, mesh_sizes, added_surface] = addLineLoop(add_coords, points, lines, line_loops, plane_surfaces, physical_surfaces, physical_lines, mesh_sizes, match_value);
 added_surfaces = [added_surfaces, added_surface]; 
 elseif (loading_bracket_type=='shear_comp')
-l_b = 1.9; 
-l_sb = 0.1; 
-l_left = 0.8; 
-h_b_tot = 1.3;
-h_b = 0.8; 
+l_b = 1.9*len_x; 
+l_sb = 0.1*len_x; 
+l_left = 0.8*len_x; 
+h_b_tot = 1.3*len_y;
+h_b = 0.8*len_y; 
 add_coords = [x_min, y_max
               x_max, y_max
               x_max, y_max+h_b
@@ -73,7 +73,7 @@ add_coords = [x_min, y_max
               x_max-l_b, y_max+h_b-h_b_tot
               x_max-l_b+l_left/2, y_max+h_b-h_b_tot
               x_max-l_b+l_left, y_max+h_b-h_b_tot
-              x_max-l_b+l_left, 1.0]; 
+              x_max-l_b+l_left, len_y]; 
 [points, lines, line_loops, plane_surfaces, physical_surfaces, physical_lines, mesh_sizes, added_surface] = addLineLoop(add_coords, points, lines, line_loops, plane_surfaces, physical_surfaces, physical_lines, mesh_sizes, match_value);
 added_surfaces = [added_surfaces, added_surface];           
 end

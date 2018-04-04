@@ -46,28 +46,49 @@ classdef Polygon
             x_max = obj.xy_min_max(2);
             y_min = obj.xy_min_max(3);
             y_max = obj.xy_min_max(4);            
-            tol = (x_max-x_min)/300; 
+            tol = (x_max-x_min)/1000; 
+            tol2 = (x_max-x_min)/100; 
             for i = 1:obj.nb_point
                 coord = obj.coords(i,:); 
                 if abs(coord(1)-x_min)<tol
                     obj.coords(i,1) = x_min;
                     obj.is_on_left_edge = true;
                     obj.pos_ind(i,1) = 1; 
+                    if abs(obj.coords(i,2)-y_min)<tol2
+                        obj.coords(i,2) = y_min;
+                    elseif abs(obj.coords(i,2)-y_max)<tol2
+                        obj.coords(i,2) = y_max;
+                    end
                 end 
                 if abs(coord(1)-x_max)<tol
                     obj.coords(i,1) = x_max;
                     obj.is_on_right_edge = true;
-                    obj.pos_ind(i,2) = 1; 
+                    obj.pos_ind(i,2) = 1;
+                    if abs(obj.coords(i,2)-y_min)<tol2
+                        obj.coords(i,2) = y_min;
+                    elseif abs(obj.coords(i,2)-y_max)<tol2
+                        obj.coords(i,2) = y_max;
+                    end                    
                 end 
                 if abs(coord(2)-y_min)<tol
                     obj.coords(i,2) = y_min;
                     obj.is_on_down_edge = true; 
-                    obj.pos_ind(i,3) = 1;                     
+                    obj.pos_ind(i,3) = 1;     
+                    if abs(obj.coords(i,1)-x_min)<tol2
+                        obj.coords(i,1) = x_min;
+                    elseif abs(obj.coords(i,1)-x_max)<tol2
+                        obj.coords(i,1) = x_max;
+                    end
                 end 
                 if abs(coord(2)-y_max)<tol
                     obj.coords(i,2) = y_max;
                     obj.is_on_up_edge = true;
                     obj.pos_ind(i,4) = 1; 
+                    if abs(obj.coords(i,1)-x_min)<tol2
+                        obj.coords(i,1) = x_min;
+                    elseif abs(obj.coords(i,1)-x_max)<tol2
+                        obj.coords(i,1) = x_max;
+                    end                    
                 end 
             end 
            obj.nb_edge = double(obj.is_on_left_edge) + double(obj.is_on_right_edge) + ...
@@ -199,7 +220,21 @@ classdef Polygon
                 obj.pos_ind(start_p+1:end_p-1,:)=[]; 
                 obj.coords(start_p+1:end_p-1,:)=[]; 
                 obj = obj.addCoords([start_p]); 
-                
+%                 x_min = obj.xy_min_max(1);
+%                 x_max = obj.xy_min_max(2);
+%                 y_min = obj.xy_min_max(3);
+%                 y_max = obj.xy_min_max(4);
+%                 coords_corner = [x_min y_min
+%                                  x_max y_min
+%                                  x_max y_max
+%                                  x_min y_max];
+%                 tolerence = 0.005; 
+%                 for ss = 1:4 
+%                     if norm(coords_corner(ss,:)-obj.coords(start_p+1:end_p-1,:))
+%                     end 
+%                     if 
+%                     end 
+%                 end 
             elseif (1.5<obj.nb_edge)&&(obj.nb_edge<2.5) 
                 obj.xy_min_max = obj.setgetVar();
                 x_min = obj.xy_min_max(1);
@@ -219,6 +254,7 @@ classdef Polygon
                     corner_point = [x_min,y_max];
                     indicate_edges = [1 0 0 1];
                 end
+                if ~((norm(corner_point-obj.coords(start_p,:))<0.00001)||(norm(corner_point-obj.coords(end_p,:))<0.00001))
                 obj.pos_ind = [ obj.pos_ind(1:start_p,:)
                                 indicate_edges
                                 obj.pos_ind(end_p:end,:)]; 
@@ -226,7 +262,12 @@ classdef Polygon
                 obj.coords = [obj.coords(1:start_p,:)
                               corner_point
                               obj.coords(end_p:end,:)]; 
-                obj = obj.addCoords([start_p,start_p+1]);                 
+                obj = obj.addCoords([start_p,start_p+1]);      
+                else
+                obj.pos_ind(start_p+1:end_p-1,:)=[]; 
+                obj.coords(start_p+1:end_p-1,:)=[]; 
+                obj = obj.addCoords([start_p]); 
+                end 
                 
             end 
             [obj.nb_point, dim] = size(obj.coords); 
@@ -268,7 +309,7 @@ classdef Polygon
             else 
                 nb_p_min = 3;                 
             end
-            resampling_len = 0.02;%for A-E 0.05; 
+            resampling_len = 0.01;% for elps elps2 0.02;%for A-E 0.05; 
             nb_points_cal = floor(tot_length / resampling_len); 
             if (nb_points_cal < nb_p_min)
                 nb_points_cal = nb_p_min; 
