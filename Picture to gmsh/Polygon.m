@@ -47,7 +47,7 @@ classdef Polygon
             y_min = obj.xy_min_max(3);
             y_max = obj.xy_min_max(4);            
             tol = (x_max-x_min)/1000; 
-            tol2 = (x_max-x_min)/100; 
+            tol2 = (x_max-x_min)/1000; 
             for i = 1:obj.nb_point
                 coord = obj.coords(i,:); 
                 if abs(coord(1)-x_min)<tol
@@ -309,7 +309,7 @@ classdef Polygon
             else 
                 nb_p_min = 3;                 
             end
-            resampling_len = 0.01;% for elps elps2 0.02;%for A-E 0.05; 
+            resampling_len = 0.02;% for elps elps2 0.02;%for A-E 0.05; 
             nb_points_cal = floor(tot_length / resampling_len); 
             if (nb_points_cal < nb_p_min)
                 nb_points_cal = nb_p_min; 
@@ -505,7 +505,7 @@ classdef Polygon
                    if (M_indice == 1)||(M_indice == 2) % when it is on the left or right edge
                       if abs(coords_i(1)-p_start(1))<tol
                           if (p_start(2)-coords_i(2))*(coords_i(2)-p_end(2))>0
-                              disp(sprintf("Found the edge containing point (%f, %f)",coords_i(1),coords_i(2)));
+                              disp(sprintf('Found the edge containing point (%f, %f)',coords_i(1),coords_i(2)));
                               % adjust the coordate that is the in the
                               % midle of the two points 
                               [adj_p, add_point] = adjustAddCoord(p_start(2), p_end(2), coords_i(2), mz); 
@@ -530,7 +530,7 @@ classdef Polygon
                    elseif (M_indice == 3)||(M_indice == 4) % when it is on the down or up edge
                       if abs(coords_i(2)-p_start(2))<tol
                           if (p_start(1)-coords_i(1))*(coords_i(1)-p_end(1))>0
-                              disp(sprintf("Found the edge containing point (%f, %f)",coords_i(1),coords_i(2)));
+                              disp(sprintf('Found the edge containing point (%f, %f)',coords_i(1),coords_i(2)));
                               [adj_p, add_point] = obj.adjustAddCoord(p_start(1), p_end(1), coords_i(1), mz);    
                               if add_point
                                   obj.coords = [obj.coords(1:j,:); coords_i; obj.coords(j+1:end,:)];  

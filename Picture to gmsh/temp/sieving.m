@@ -18,36 +18,43 @@ function [ sieved_polygons, colors ] = sieving( initial_polygons,min_length,colo
 %
 % %% AUTEUR : Martin HOFMANN
 % %% DATE   : January 2016
+%             Shzhang
+%             Efficiency improve
+%             TO DO: need to add the code finding the maximum distance,
+%             current modification would not work for eliminating super
+%             long stones
 %
 %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 k=1;
+max_dst = zeros(length(initial_polygons),1); 
+area_plg = zeros(length(initial_polygons),1); 
 for i=1:length(initial_polygons)
-    
     poly=initial_polygons{1,i};
-    aire=get_area_polygon(poly);
-    dx=max(poly(:,1))-min(poly(:,1));
-    dy=max(poly(:,2))-min(poly(:,2));
-    kk=1;
-    
-    for j=1:size(poly,1)
-        
-        for l=j+1:size(poly,1)
-            d(kk)=distanz(poly(j,:),poly(l,:));
-            kk=kk+1;
-            
-        end
-        
-    end
-    
-    maxd=max(d);
-    
-    if aire/maxd>min_length 
-        
+    aera=get_area_polygon(poly);
+    if aera > min_length*min_length
         sieved_polygons{1,k}=initial_polygons{1,i};
         colors(k,:)=colors(i,:);
-        k=k+1;   
-        
-    end
+        k=k+1; 
+     %   continue
+    end 
+%     dx=max(poly(:,1))-min(poly(:,1));
+%     dy=max(poly(:,2))-min(poly(:,2));
+%     kk=1;
+%     d = zeros(int(size(poly,1)/2)*size(poly,1)); 
+%     for j=1:int(size(poly,1)/2)
+%         for l=j+1:size(poly,1)
+%             d(kk)=distanz(poly(j,:),poly(l,:));
+%             kk=kk+1;
+%         end
+%     end
+%     
+%     maxd=max(d);
+%     
+%     if aera/maxd>min_length 
+%         
+%   
+%         
+%     end
 
 end
         

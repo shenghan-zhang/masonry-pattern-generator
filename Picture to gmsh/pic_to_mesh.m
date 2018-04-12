@@ -7,8 +7,8 @@ function main
 %%
 %name_spm = {'C1'}; 
 close all
-name_spm = {'INT2_eqv_t002_new2'};%{'INT1','INT2','INT4'};% {'TypoAN1', 'TypoEO1'};
-scale_mesh = true; 
+name_spm = {'INT4_t002_new2'};%{'INT4_eqv_t002_le1_new2','INT4_eqv_t002_le2_new2','INT4_eqv_t002_le3_new2','INT1_eqv_t002_new2'};%{'INT1','INT2','INT4'};% {'TypoAN1', 'TypoEO1'};
+scale_mesh = false; 
 add_boundary = 0; % 0 with adding any boundary condition 
                   % 1 with only one beam on top of the specimen
                   % 2 with two shortened beams for diagonal compression
@@ -16,14 +16,15 @@ add_boundary = 0; % 0 with adding any boundary condition
 
 for i_glb = 1:length(name_spm)
 clearvars -except i_glb name_spm scale_mesh add_boundary
-
 clc;
+debug=true; 
+if debug
 addpath(genpath('..'));
 %addpath('C:\Users\shzhang\Desktop\temp\')
 %folder='.\..\Italian topologies\'; % Folder in which the picture is
 folder = 'Z:\temp_pic\';
 file = sprintf('%s.png',name_spm{i_glb});
-filename = sprintf('%smy_mesh_from_pic_%s_2_ms001.geo',folder,name_spm{i_glb});
+filename = sprintf('%smy_mesh_from_pic_%s_2_ms002.geo',folder,name_spm{i_glb});
 
 Lx=0.74; % Length of the picture
 Ly=0.74; % Height of the picture
@@ -37,18 +38,19 @@ epsilon=0.0000001; % Approximation constraint
 do_resample = true; 
 do_skip = true; 
 pic_type = 'bw';
-[polygons]=get_polygons_from_picture(folder,file,pic_type,Lx,Ly,dl,true,0.005); % Get the polygons from BW picture
+[polygons]=get_polygons_from_picture(folder,file,pic_type,Lx,Ly,dl,true,0.001); % Get the polygons from BW picture
 %[polygons]=get_polygons_from_picture(folder,file,pic_type,Lx,Ly,dl); % Get the polygons from BW picture
 % resampled_stones=resample_polygons(polygons,min_vertices,l_edges,span); % Resampling + Deleting redundant vertices
 colors=create_colors(2000);
 min_length_sieving = 0.002;
 % min_length_sieving = 0.007;
 [resampled_stones,colors_sieved]=sieving(polygons,min_length_sieving,colors);
-
+end
 
 %%
 
 for i = 1:length(resampled_stones)
+    i
     new_coords = resampled_stones{i}; 
 
     % check the situation that when the points are arranged as 
@@ -125,6 +127,8 @@ if (scale_mesh)
 %     x_max = xy_min_max(2);
 %     y_min = xy_min_max(3);
 %     y_max = xy_min_max(4);     
+else
+    Polygon.setgetVar([0,Lx,0,Ly]);
 end
     
 
@@ -172,19 +176,19 @@ end
 % Polygon.xy_min.y_min = y_min; 
 % Polygon.xy_min.y_max = y_max; 
 
-if (scale_mesh)
+% if (scale_mesh)
 box = [0, 0
        0, Ly
        Lx, Ly
        Lx, 0
        0, 0]; 
-else
-box = [x_min, y_min
-       x_min, y_max
-       x_max, y_max
-       x_max, y_min
-       x_min, y_min]; 
-end
+% else
+% box = [x_min, y_min
+%        x_min, y_max
+%        x_max, y_max
+%        x_max, y_min
+%        x_min, y_min]; 
+% end
 xd = box(:,1);
 yd = box(:,2);
 
@@ -196,7 +200,7 @@ yd = box(:,2);
 
 %% print all the infomation
 
-mesh_size = 0.01;%0.035;%0.053;
+mesh_size = 0.02;%0.01;%0.035;%0.053;
 mesh_size_2 = Lx/10;
 
 fileID = fopen(filename,'w');
@@ -314,7 +318,7 @@ x_min = min(x_min_a);
 x_max = max(x_max_a);
 y_min = min(y_min_a);
 y_max = max(y_max_a);
-disp(sprintf("the functions that we calculated is, x_min %f, x_max %f, y_min %f, y_max %f",x_min, x_max, y_min, y_max)); 
+% disp(sprintf("the functions that we calculated is, x_min %f, x_max %f, y_min %f, y_max %f",x_min, x_max, y_min, y_max)); 
 Polygon.setgetVar([x_min,x_max,y_min,y_max]);
 end 
 
@@ -330,7 +334,7 @@ function out = snap_back(coords1, coords2, coords3)
     if abs(area)<tol
         % check if they are in the same direction 
         if (coords2-coords1)*(coords3-coords2)'<0
-            disp("eliminate one point");
+            disp('eliminate one point');
             out = true;
             return; 
         end

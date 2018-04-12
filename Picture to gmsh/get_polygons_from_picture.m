@@ -34,15 +34,15 @@ nx=size(BW,2); % Number of pixels along x axis
 ny=size(BW,1); % Number of pixels along y axis
 if exist('do_crop','var')
     if do_crop
-        BW = imcrop(BW, [per_crop*nx per_crop*ny (1-per_crop)*nx (1-per_crop)*ny]);
+        BW = imcrop(BW, [per_crop*nx per_crop*ny (1-2*per_crop)*nx (1-2*per_crop)*ny]);
     end 
 else
     BW = imcrop(BW, [0.02*nx 0.02*ny 0.96*nx 0.96*ny]);
 end
 nx=size(BW,2); % Number of pixels along x axis
 ny=size(BW,1); % Number of pixels along y axis
-sx=Lx/nx; % size of the pixels in x dimension
-sy=Ly/ny; % size of the pixels in y dimension
+sx=Lx/(nx-1); % size of the pixels in x dimension
+sy=Ly/(ny-1); % size of the pixels in y dimension
 
 n_dl_x=round(dl/sx); % Number of pixels to add along x direction
 n_dl_y=round(dl/sy); % Number of pixels to add along y direction
@@ -60,10 +60,9 @@ polygons=B;
 
 polygons_coord=cell(1,length(polygons)-1);
 for i=2:length(polygons) % The first one is the outside frame
-    for j=1:size(polygons{i},1)
-        polygons_coord{i-1}(j,1)=(polygons{i}(j,2)-0.5)*sx; % Computation of x coordinates 
-        polygons_coord{i-1}(j,2)=Ly+2*dly_true-(polygons{i}(j,1)-0.5)*sy; % Computation of y coordinates
-    end
+        polygons_coord{i-1}(:,1)=(polygons{i}(:,2)-n_dl_x-1)*sx; % Computation of x coordinates 
+        polygons_coord{i-1}(:,2)=(ny+n_dl_y-polygons{i}(:,1))*sy;
+        %polygons_coord{i-1}(:,2)=(n_dl_y+ny-polygons{i}(:,2))*sy;%Ly+2*dly_true-(polygons{i}(j,1)-0.5)*sy; % Computation of y coordinates
 end
 to_del=[];
 for i=1:numel(polygons_coord)
