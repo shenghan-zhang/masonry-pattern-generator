@@ -7,7 +7,7 @@ function main
 %%
 %name_spm = {'C1'}; 
 close all
-name_spm = {'INT4_t002_new2'};%{'INT4_eqv_t002_le1_new2','INT4_eqv_t002_le2_new2','INT4_eqv_t002_le3_new2','INT1_eqv_t002_new2'};%{'INT1','INT2','INT4'};% {'TypoAN1', 'TypoEO1'};
+name_spm = {'INT46_t00215_le1_new3','INT46_t00215_le2_new3','INT46_t00215_le3_new3','INT10_t00215_new3','INT20_t00215_new3','INT46_t00215_new3'};%{'INT4_eqv_t002_le1_new2','INT4_eqv_t002_le2_new2','INT4_eqv_t002_le3_new2','INT1_eqv_t002_new2'};%{'INT1','INT2','INT4'};% {'TypoAN1', 'TypoEO1'};
 scale_mesh = false; 
 add_boundary = 0; % 0 with adding any boundary condition 
                   % 1 with only one beam on top of the specimen
@@ -17,12 +17,14 @@ add_boundary = 0; % 0 with adding any boundary condition
 for i_glb = 1:length(name_spm)
 clearvars -except i_glb name_spm scale_mesh add_boundary
 clc;
+mesh_size = 0.01; 
+Polygon.setgetDiscretizLength(mesh_size); % 0.01;%0.01;%0.035;%0.053;
 debug=true; 
 if debug
 addpath(genpath('..'));
 %addpath('C:\Users\shzhang\Desktop\temp\')
 %folder='.\..\Italian topologies\'; % Folder in which the picture is
-folder = 'Z:\temp_pic\';
+folder = 'Z:\project\05_LMT_Sizeeffect\05_Mesh\'; 
 file = sprintf('%s.png',name_spm{i_glb});
 filename = sprintf('%smy_mesh_from_pic_%s_2_ms002.geo',folder,name_spm{i_glb});
 
@@ -42,7 +44,7 @@ pic_type = 'bw';
 %[polygons]=get_polygons_from_picture(folder,file,pic_type,Lx,Ly,dl); % Get the polygons from BW picture
 % resampled_stones=resample_polygons(polygons,min_vertices,l_edges,span); % Resampling + Deleting redundant vertices
 colors=create_colors(2000);
-min_length_sieving = 0.002;
+min_length_sieving = mesh_size/2;
 % min_length_sieving = 0.007;
 [resampled_stones,colors_sieved]=sieving(polygons,min_length_sieving,colors);
 end
@@ -200,7 +202,7 @@ yd = box(:,2);
 
 %% print all the infomation
 
-mesh_size = 0.02;%0.01;%0.035;%0.053;
+
 mesh_size_2 = Lx/10;
 
 fileID = fopen(filename,'w');

@@ -309,7 +309,7 @@ classdef Polygon
             else 
                 nb_p_min = 3;                 
             end
-            resampling_len = 0.02;% for elps elps2 0.02;%for A-E 0.05; 
+            resampling_len = obj.setgetDiscretizLength();% for elps elps2 0.02;%for A-E 0.05; 
             nb_points_cal = floor(tot_length / resampling_len); 
             if (nb_points_cal < nb_p_min)
                 nb_points_cal = nb_p_min; 
@@ -641,6 +641,15 @@ classdef Polygon
             end
             out_add_coords = add_coords; 
             out_is_on_stone = is_on_stone; 
+        end
+    end
+    methods (Static)
+        function out_resampling_len = setgetDiscretizLength(disc_len)
+            persistent resampling_len;
+            if nargin
+                resampling_len = disc_len; 
+            end
+            out_resampling_len = resampling_len; 
         end
     end
 end

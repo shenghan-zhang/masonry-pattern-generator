@@ -1,15 +1,16 @@
 function main
 %name_spm = {'A1', 'A2', 'A3', 'B1', 'B2', 'B3', 'C1', 'C2', 'C3', 'D1', 'D2', 'D3', 'E1', 'E2', 'E3'};
-name_spm = {'INT2_eqv_t002_new,INT4_eqv_t002_new'};
+%name_spm = {'INT1_eqv_t002_new2','INT4_eqv_t002_le1_new2','INT4_eqv_t002_le2_new2','INT4_eqv_t002_le3_new2'};
+name_spm = {'INT46_t00215_le1_new3','INT46_t00215_le2_new3','INT46_t00215_le3_new3','INT10_t00215_new3','INT20_t00215_new3','INT46_t00215_new3'};
 % name_spm = {'INT1_eqv_t002','INT2_eqv_t002','INT4_eqv_t002'};
 for i_glb = 1:length(name_spm)
 clearvars -except i_glb name_spm 
-folder_path = 'Z:\temp_pic\';
+
 do_scale = false;
 loading_bracket_type = 'shear_comp'; % 'diag_comp', 'beam', 'shear_comp'
-
-file_name = sprintf('%smy_mesh_from_pic_%s_2.geo',folder_path,name_spm{i_glb})
-file_name_r = sprintf('%smy_mesh_from_pic_%s_ms1_sm.geo',folder_path,name_spm{i_glb});
+folder_path = 'Z:\project\05_LMT_Sizeeffect\05_Mesh\'; 
+file_name = sprintf('%smy_mesh_from_pic_%s_2_ms002.geo',folder_path,name_spm{i_glb})
+file_name_r = sprintf('%smy_mesh_from_pic_%s_ms002_sm.geo',folder_path,name_spm{i_glb});
 [points, lines, line_loops, plane_surfaces, physical_surfaces, physical_lines, mesh_sizes] = readFromGmshGeo(file_name);
 mesh_sizes('h3') = 0.2;
 %% find info about the mesh 

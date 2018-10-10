@@ -31,7 +31,23 @@ area_plg = zeros(length(initial_polygons),1);
 for i=1:length(initial_polygons)
     poly=initial_polygons{1,i};
     aera=get_area_polygon(poly);
-    if aera > min_length*min_length
+    if length(poly(:,1))>2000
+        poly_reduce = poly([1:40:end-1,end],:); % reduece the examined 
+    elseif length(poly(:,1))>1000
+        poly_reduce = poly([1:20:end-1,end],:); % reduece the examined 
+    else
+        poly_reduce = poly; 
+    end 
+    d = zeros(round(size(poly_reduce,1)/2)*size(poly_reduce,1),1); 
+    kk=1;
+    for j=1:round(size(poly_reduce,1)/2)
+        for l=j+1:size(poly_reduce,1)
+            d(kk)=norm(poly_reduce(j,:)-poly_reduce(l,:));
+            kk=kk+1;
+        end
+    end    
+    min_d = aera/ max(d);
+    if ((aera > min_length*min_length) && (min_d> min_length))
         sieved_polygons{1,k}=initial_polygons{1,i};
         colors(k,:)=colors(i,:);
         k=k+1; 
