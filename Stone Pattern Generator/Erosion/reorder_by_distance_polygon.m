@@ -13,22 +13,29 @@ function [ polygon ] = reorder_by_distance_polygon( poly )
 %
 % %% AUTEUR : Martin HOFMANN
 % %% DATE   : November 2015
+% bug correction for deleting unsorted points 
+% %% AUTEUR : Shenghan Zhang
+% %% email: shenghan.zhang@epfl.ch
 %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 polygon(1,:)=poly(1,:);
 poly(1,:)=[];
 k=1;
 out=0;
 n=size(poly,1)+1;
-
+fisrt_point = polygon(1,:); 
 while out==0
     
     d=distanz(polygon(k,:),poly);
-    [~,ind]=min(d);
+    [cur_min,ind]=min(d);
+    if ((size(polygon,1)>n/2)&&(norm(polygon(k,:)-fisrt_point)<cur_min)) %
+        out = 2; 
+        break
+    end
     polygon(k+1,:)=poly(ind,:);
     poly(ind,:)=[];
     k=k+1;
     
-    if size(polygon,1)==n
+    if size(polygon,1)==n 
         
         out=1;
         
