@@ -68,6 +68,15 @@ function [ X_eroded,Y_eroded,durability ] = erode_polygon( x,y,dl,n_pixels,mean_
 % %% AUTEUR : Martin HOFMANN
 % %% DATE   : November 2015
 % See also ERODE_STONES
+% Modified Shengahn ZHANG 06.11.2018 
+% TO DO: 
+% Delete the 100 both from the initial value and also from the calculation
+% of iteration steps. 
+% Note that in this file, the state variable is set to 100, which is the
+% reason why in the calculation of iteration steps, there is a 100 in the
+% beginning of the expression. However, this is not necessary, for the same
+% value of 100 appears at both sides of the equation. 
+%
 %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %% INITIALIZATIONS %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

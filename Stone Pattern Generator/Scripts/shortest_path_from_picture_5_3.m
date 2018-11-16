@@ -5,8 +5,8 @@ clear variables;
 close all;
 clc;    
 
-addpath(genpath('Z:\project\03_Fun_matlab'))
-addpath('C:\Users\shzhang\Google Drive\for_martin\cal_visibility')
+addpath(genpath('..\Tools\'))
+addpath('..\Cal_Visibility')
 %% PARAMETERS DEFINITION
 cd(pwd)
 %% PICTURE PARAMETERS
@@ -20,6 +20,7 @@ folder='.\..\..\Italian topologies\'; % Folder in which the picture is
          {'TypoC.png','TypoCN1.png','TypoCN2.png','TypoCN3.png'},...
          {'TypoD.png','TypoDN1.png','TypoDN4_3.png','TypoDN5_5.png'},...
          {'TypoE.png','TypoEO1.png','TypoEO3.png','TypoEO5.png'}};
+ file = {{'MySavedPlot1.png'}};
  folder='.\';
 % file = {{'TypoCN3.png'}};
 % file ={{'INT1_eqv_t002_new2.png'},...

@@ -52,7 +52,7 @@ ny_ = 0.1667;
 % nx = defined in dedicated function;
 % ny = defined in dedicated function;
 end
-%% Voronoi splitting Options
+%% Voronoi splitting options
 if (~exist('in_dedicated_function','var'))
 tresholdArea=0.055;
 AThresholdVoronoi = tresholdArea; % sh: probably should change the input of line 92 in the main function  

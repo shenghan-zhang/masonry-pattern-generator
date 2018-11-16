@@ -24,14 +24,21 @@ function [ cropped_stones,Lx_wall,Ly_wall,colors ] = crop_picture( sieved_stones
 %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 polycrop=[dl_crop,dl_crop;dl_crop,Ly_wall-dl_crop;Lx_wall-dl_crop,Ly_wall-dl_crop;Lx_wall-dl_crop,dl_crop];
-
+if (nargin==4)
+    colors= 0; 
+    copy_colors = false;
+else
+    copy_colors = true;
+end
 k=1;
 for i=1:numel(sieved_stones)
     poly=sieved_stones{i};
     [x,y]=polybool('intersection',polycrop(:,1),polycrop(:,2),poly(:,1),poly(:,2));
     if isempty(x)==0
         cropped_stones{k}=[x,y];
+        if copy_colors
         colors(k,:)=colors_a(i,:);
+        end
         k=k+1;
     end
 end

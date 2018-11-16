@@ -5,7 +5,7 @@
 % name_group = {'Ta_A1','Ta_A2','Ta_A3','Ta_A4','Ta_A5'};
 name_group = {'A','B','C','D','E','E1'};
 for g = 1:1
-    for s = 1:50
+    for s = 1:1
 % for g = 1:5
 %% INITIALISATION %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 clearvars -except g name_group s%clear;
@@ -15,10 +15,12 @@ clc;
 addpath(genpath('..'));
 %addpath('Y:\06_File_Transfer\For_Shenghan\Resources Shenghan v2\Stone Pattern Generator\Parameters\');
 %parameters_stone_masonry_Eb;
+% The folder for the parameters is in ".\masonry-pattern-generator\Stone
+% Pattern Generator\Parameters"
 switch name_group{g}
     case 'A'
     parameters_stone_masonry_Ac;
-    file_params = 'parameters_stone_masonry_Ac;';
+    file_params = 'parameters_stone_masonry_Ad;';%'parameters_stone_masonry_Ac;';
     case 'B'
     parameters_stone_masonry_Bc;
     file_params = 'parameters_stone_masonry_Bc;';
