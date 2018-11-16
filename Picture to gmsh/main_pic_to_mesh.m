@@ -1,43 +1,46 @@
-function main
+function pic_to_mesh
+% PIC_TO_MESH. Here in this file, we transfer a segmented picutre to gmsh file 
+% 
+% Shenghan Zhang <shenghan.zhang@epfl.ch> EESD EPFL Switzerland
+% Nov. 2017, created 
+% Nov. 2018, cleaning up the code
 %%
-% Get the gmsh file from picture 
-% Shenghan Zhang <shenghan.zhang@epfl.ch>
-% EESD EPFL Switzerland
-% Nov.2017
-%%
-%name_spm = {'C1'}; 
 close all
-name_spm = {'INT46_t00215_le1_new3','INT46_t00215_le2_new3','INT46_t00215_le3_new3','INT10_t00215_new3','INT20_t00215_new3','INT46_t00215_new3'};%{'INT4_eqv_t002_le1_new2','INT4_eqv_t002_le2_new2','INT4_eqv_t002_le3_new2','INT1_eqv_t002_new2'};%{'INT1','INT2','INT4'};% {'TypoAN1', 'TypoEO1'};
+%% INPUT PARAMETERS
+% name_spm = {'INT46_t00215_le1_new3','INT46_t00215_le2_new3','INT46_t00215_le3_new3', ...
+%             'INT10_t00215_new3','INT20_t00215_new3','INT46_t00215_new3'};%{'INT4_eqv_t002_le1_new2','INT4_eqv_t002_le2_new2','INT4_eqv_t002_le3_new2','INT1_eqv_t002_new2'};%{'INT1','INT2','INT4'};% {'TypoAN1', 'TypoEO1'};
+%             % name_spm gives the name for which we want to generate a mesh
+name_spm ={'INT20_t00215_new3'};  %{'INT20_t00215_new3'};%{'TypoAN1'}; 
+pic_type = 'png';
 scale_mesh = false; 
 add_boundary = 0; % 0 with adding any boundary condition 
                   % 1 with only one beam on top of the specimen
                   % 2 with two shortened beams for diagonal compression
                   % test 
 
+mesh_size = 0.02; % in the generated gmsh file, the approximation of the curved 
+    % bounary is set up to mesh_size, for anymore osilation can not be
+    % represented in the mesh. 
+folder = '.\'; 
+
+                  
 for i_glb = 1:length(name_spm)
-clearvars -except i_glb name_spm scale_mesh add_boundary
+clearvars -except i_glb name_spm scale_mesh add_boundary pic_type mesh_size folder
 clc;
-mesh_size = 0.01; 
+
 Polygon.setgetDiscretizLength(mesh_size); % 0.01;%0.01;%0.035;%0.053;
 debug=true; 
 if debug
 addpath(genpath('..'));
 %addpath('C:\Users\shzhang\Desktop\temp\')
 %folder='.\..\Italian topologies\'; % Folder in which the picture is
-folder = 'Z:\project\05_LMT_Sizeeffect\05_Mesh\'; 
-file = sprintf('%s.png',name_spm{i_glb});
-filename = sprintf('%smy_mesh_from_pic_%s_2_ms002.geo',folder,name_spm{i_glb});
+file = sprintf('%s.%s',name_spm{i_glb},pic_type);
+filename = sprintf('%smy_mesh_from_pic_%s_2_ms%03d.geo',folder,name_spm{i_glb},mesh_size*100);
 
 Lx=0.74; % Length of the picture
 Ly=0.74; % Height of the picture
-resolution=8;
 dl=0.02;% If necessary, put non-zero value to add a mortar layer
-min_vertices=5; % Minimum number of vertices by stone
-l_edges=0.01;%0.035;%0.05; % Length of the resampled edges of the polygons Not true / modify !
-span=0;%1; % Span of the averaging of the vertices coordinates during resampling
 
-epsilon=0.0000001; % Approximation constraint
-do_resample = true; 
 do_skip = true; 
 pic_type = 'bw';
 [polygons]=get_polygons_from_picture(folder,file,pic_type,Lx,Ly,dl,true,0.001); % Get the polygons from BW picture
@@ -46,11 +49,14 @@ pic_type = 'bw';
 colors=create_colors(2000);
 min_length_sieving = mesh_size/2;
 % min_length_sieving = 0.007;
+dl_crop = 0.0;
+polygons = resizePolygon(polygons,0.,Lx+2*dl_crop,Ly+2*dl_crop);
+% [ polygons,Lx,Ly,colors ] = crop_picture( polygons,dl_crop,Lx+2*dl_crop,Ly+2*dl_crop,colors);
 [resampled_stones,colors_sieved]=sieving(polygons,min_length_sieving,colors);
 end
 
 %%
-
+% Here we loop over each stone, check violation and fix them. 
 for i = 1:length(resampled_stones)
     i
     new_coords = resampled_stones{i}; 
@@ -60,7 +66,7 @@ for i = 1:length(resampled_stones)
     exist_violation = true; 
     % loop over every 3 points 
     % check if the condition is violated 
-    % if violated 
+    % if violated, we keep looping until all violation is solved 
     while exist_violation
         exist_violation = false; 
         nb_point = size(new_coords,1); 
@@ -105,7 +111,6 @@ end
 findAndSetXYMM(polygons)
 
 if (scale_mesh)
-    
     xy_min_max = Polygon.setgetVar();
     x_min = xy_min_max(1);
     x_max = xy_min_max(2);
@@ -161,9 +166,14 @@ for i = 1:length(resampled_stones)
     coord_temp = resampled_stones{i}; 
     % to be modified, adjust for the situation when the starting point is
     % on the corner 
+    if size(coord_temp,1)>200
+        start_nb = 200; 
+    else
+        start_nb = round(size(coord_temp,1)/5); 
+    end
     if i==1
-        coord_temp = [coord_temp(201:end,:)
-                      coord_temp(1:200,:)];
+        coord_temp = [coord_temp(start_nb+1:end,:)
+                      coord_temp(1:start_nb,:)];
     end 
     objArray{i} = Polygon(coord_temp); 
 end
@@ -203,18 +213,18 @@ yd = box(:,2);
 %% print all the infomation
 
 
-mesh_size_2 = Lx/10;
+ mesh_size_2 = Lx/10;
 
 fileID = fopen(filename,'w');
 % input mesh information
 h = mesh_size;
-h2 = mesh_size_2;
+ h2 = mesh_size_2;
 structured_mesh= true;
 formatSpec = 'h = %f;\n';
 fprintf(fileID, formatSpec, h);
 
-formatSpec = 'h2 = %f;\n';
-fprintf(fileID, formatSpec, h2);
+ formatSpec = 'h2 = %f;\n';
+ fprintf(fileID, formatSpec, h2);
 
 for i = 1:length(resampled_stones)
     objArray{i}.writeGmsh(fileID,'node_info')

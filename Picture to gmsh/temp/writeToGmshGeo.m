@@ -14,7 +14,9 @@ for i = 1:length(mesh_sizes)
   num2type{i} = keys{i}; 
 end
 
-for i = 1:size(points,1)   
+for i = 1:size(points,1) 
+    i
+    points(i,:)
     formatSpec = 'Point(%d) = {%f, %f, 0, %s};\n';
     fprintf(fileID, formatSpec, points(i,1), points(i,2), points(i,3), num2type{points(i,4)});
 end
