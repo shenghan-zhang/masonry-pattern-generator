@@ -49,7 +49,7 @@ if xstart1==-1
     is_over=1;
     
 end
-
+save_video=true; 
 while is_over==0  % We add bricks while we have not reached the top or the left of the square in which the wall is inscribed. 
     
     nb_stones_init=size(stonesNodes,2);
@@ -58,7 +58,8 @@ while is_over==0  % We add bricks while we have not reached the top or the left 
     row_vec=[row_vec;repmat(ind_row,nb_stones_added,1)];
     xstart1=xstart2;
     ind_brick=ind_brick+1;
-    if (nargin==13)
+%    if (nargin==13)
+    if (save_video)
             [stones_nodes,stones_pos]=get_all_nodes(pos,stonesNodes,epsilon);
              darwStone4Video(fig,stones_pos,false,Lx_wall,Ly_wall);
              figure(fig)

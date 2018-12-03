@@ -1,4 +1,4 @@
-function [p_,int_lock_] = plot_shortest_path( A,C_,xy,environment,vlim ,point_start_end,file_name,test_conv,wait_for)
+function [p_,int_lock_] = plot_shortest_path( A,C_,xy,environment,vlim ,point_start_end,file_name,int_type,test_conv,wait_for)
 % PLOT_SHORTEST_PATH plot the environnement and allows the user to pick a starting and ending point to compute shortest path
 %
 % %%%%%% usage %%%%%%
@@ -46,8 +46,8 @@ exitt=1;
     end
     forbidden_rectangle1=[0,0;0,maxy;vlim,maxy;vlim,0];
     forbidden_rectangle2=[maxx-vlim,0;maxx-vlim,maxy;maxx,maxy;maxx,0];
-    patch(forbidden_rectangle1(:,1),forbidden_rectangle1(:,2),0.12*ones(4,1),'k' , 'EdgeColor' , [0 0 0] ,'FaceColor','red','FaceAlpha',.5,'linewidth' , 0.01);
-    patch(forbidden_rectangle2(:,1),forbidden_rectangle2(:,2),0.12*ones(4,1),'k' , 'EdgeColor' , [0 0 0] ,'FaceColor','red','FaceAlpha',.5,'linewidth' , 0.01);
+ %   patch(forbidden_rectangle1(:,1),forbidden_rectangle1(:,2),0.12*ones(4,1),'k' , 'EdgeColor' , [0 0 0] ,'FaceColor','red','FaceAlpha',.5,'linewidth' , 0.01);
+ %   patch(forbidden_rectangle2(:,1),forbidden_rectangle2(:,2),0.12*ones(4,1),'k' , 'EdgeColor' , [0 0 0] ,'FaceColor','red','FaceAlpha',.5,'linewidth' , 0.01);
     hold on;
     if k==1;
         set(gcf,'position',[200 500 700 600]);
@@ -97,19 +97,20 @@ exitt=1;
             
             %Compute and plot shortest path
             for a = 1:length(C_)
+                a = length(C_)+1-a; 
                 C = C_(a);
                 figure(h1);
                 hold on
-                [~,path]= dijkstra(A,C_{a},SID,FID);
-                if (sum(isnan(path))==0)
-                    p=xy(path,:);
-                    int_lock= get_interlocking_path(p);
+                [~,path_]= dijkstra(A,C_{a},SID,FID);
+                if (sum(isnan(path_))==0)
+                    p=xy(path_,:);
+                    int_lock= get_interlocking_path(p,int_type);
                     str1=strcat('Interlocking path n? : ',num2str(int_lock));
                     h_t1=text(0.3,pv1,str1,'BackgroundColor','white');
                     if a==1
-                       cl = 'b';
+                       cl = 'r--';%cl = 'b';
                     else 
-                       cl = 'r--';
+                       cl = 'b';%cl = 'r--';
                     end
                     h_path1=plot3( p(:,1) , p(:,2) ,0.2*ones(size(p,1),1), ...
                     cl , 'Markersize' , 12 , 'LineWidth' , 3);
@@ -124,7 +125,7 @@ exitt=1;
             end
         end
         if exist('file_name','var')
-            saveas(h1,file_name);
+            saveas(h1,strcat('1_for_paper',file_name));
         end
     end
     disp('reach the end');
