@@ -1,47 +1,25 @@
 function main
-%name_spm = {'A1', 'A2', 'A3', 'B1', 'B2', 'B3', 'C1', 'C2', 'C3', 'D1', 'D2', 'D3', 'E1', 'E2', 'E3'};
-%name_spm = {'INT1_eqv_t002_new2','INT4_eqv_t002_le1_new2','INT4_eqv_t002_le2_new2','INT4_eqv_t002_le3_new2'};
-%name_spm = {'INT46_t00215_le1_new3','INT46_t00215_le2_new3','INT46_t00215_le3_new3','INT10_t00215_new3','INT20_t00215_new3','INT46_t00215_new3'};
-%name_spm = {'INT1_eqv_t002','INT2_eqv_t002','INT4_eqv_t002'};
-name_spm = {'INT20_t00215_new3'};%{'TypoAN1'};%{'INT20_t00215_new3'}
+% name_spm = {'A1', 'A2', 'A3', 'B1', 'B2', 'B3', 'C1', 'C2', 'C3', 'D1', 'D2', 'D3', 'E1', 'E2', 'E3'};
+name_spm = {'C1'};
 for i_glb = 1:length(name_spm)
 clearvars -except i_glb name_spm 
-
-do_scale = false;
-loading_bracket_type = 'diag_comp';%'shear_comp'; % 'diag_comp', 'beam', 'shear_comp'
-% folder_path = 'Z:\project\05_LMT_Sizeeffect\05_Mesh\'; 
-folder_path = '.\'; 
-file_name = sprintf('%smy_mesh_from_pic_%s_2_ms002.geo',folder_path,name_spm{i_glb}); 
-file_name_r = sprintf('%smy_mesh_from_pic_%s_ms002_sm.geo',folder_path,name_spm{i_glb});
+folder_path = 'Z:\temp_pic\';
+file_name = sprintf('%smy_mesh_from_pic_%s_2.geo',folder_path,name_spm{i_glb})
+file_name_r = sprintf('%smy_mesh_from_pic_%s_r.geo',folder_path,name_spm{i_glb});
 [points, lines, line_loops, plane_surfaces, physical_surfaces, physical_lines, mesh_sizes] = readFromGmshGeo(file_name);
-mesh_sizes('h3') = 0.2;
+
 %% find info about the mesh 
 x_min = min(points(:,2));
 x_max = max(points(:,2));
 y_min = min(points(:,3));
 y_max = max(points(:,3));
+
 len_x = x_max-x_min; 
 len_y = y_max-y_min; 
-if (do_scale)
-%     nb_points = length(points(:,2)); 
-%     for n = 1:nb_points
-    points(:,2) = (points(:,2)-x_min )/len_x; 
-    points(:,3) = (points(:,3)-y_min )/len_y;
-%     end 
-    x_min = min(points(:,2));
-    x_max = max(points(:,2));
-    y_min = min(points(:,3));
-    y_max = max(points(:,3));
-    len_x = x_max-x_min; 
-    len_y = y_max-y_min;
-end
- 
 tol = 1e-6; 
-PointAdded.setgetVar(points)
 match_value = [x_min, x_max, y_min, y_max];
 added_surfaces = []; 
 %%
-if (strcmp(loading_bracket_type,'diag_comp'))
 len_loading_shoe = 0.10; 
 
 dir = [1,-1]; 
@@ -61,25 +39,9 @@ add_coords = [x_min, y_max-0.1*len_y
               [x_min, y_max-0.1*len_y]+dir*len_loading_shoe*len_x]; 
 
 [points, lines, line_loops, plane_surfaces, physical_surfaces, physical_lines, mesh_sizes, added_surface] = addLineLoop(add_coords, points, lines, line_loops, plane_surfaces, physical_surfaces, physical_lines, mesh_sizes, match_value);
+
 added_surfaces = [added_surfaces, added_surface]; 
-elseif (loading_bracket_type=='shear_comp')
-l_b = 1.9*len_x; 
-l_sb = 0.1*len_x; 
-l_left = 0.8*len_x; 
-h_b_tot = 1.3*len_y;
-h_b = 0.8*len_y; 
-add_coords = [x_min, y_max
-              x_max, y_max
-              x_max, y_max+h_b
-              x_min, y_max+h_b
-              x_max-l_b, y_max+h_b
-              x_max-l_b, y_max+h_b-h_b_tot
-              x_max-l_b+l_left/2, y_max+h_b-h_b_tot
-              x_max-l_b+l_left, y_max+h_b-h_b_tot
-              x_max-l_b+l_left, len_y]; 
-[points, lines, line_loops, plane_surfaces, physical_surfaces, physical_lines, mesh_sizes, added_surface] = addLineLoop(add_coords, points, lines, line_loops, plane_surfaces, physical_surfaces, physical_lines, mesh_sizes, match_value);
-added_surfaces = [added_surfaces, added_surface];           
-end
+
 physical_surfaces('"steel"')=added_surfaces;
 writeToGmshGeo(file_name_r, points, lines, line_loops, plane_surfaces, physical_surfaces, physical_lines, mesh_sizes);
 
@@ -166,10 +128,6 @@ for o = 1:length(objArray)
         max_line_id = max([max(line_loops_id),max(lines(:,1))]);
         % add a line 
         max_line_id = max_line_id+1; 
-        max_line_id, id_pre, id_next
-        if isempty(id_next)
-            disp("hello")
-        end 
         lines = [lines
                  max_line_id id_pre id_next]; 
         line_loop = [line_loop max_line_id]; 
