@@ -10,7 +10,7 @@ close all
 % name_spm = {'INT46_t00215_le1_new3','INT46_t00215_le2_new3','INT46_t00215_le3_new3', ...
 %             'INT10_t00215_new3','INT20_t00215_new3','INT46_t00215_new3'};%{'INT4_eqv_t002_le1_new2','INT4_eqv_t002_le2_new2','INT4_eqv_t002_le3_new2','INT1_eqv_t002_new2'};%{'INT1','INT2','INT4'};% {'TypoAN1', 'TypoEO1'};
 %             % name_spm gives the name for which we want to generate a mesh
-name_spm ={'INT20_t00215_new3'};  %{'INT20_t00215_new3'};%{'TypoAN1'}; 
+name_spm ={'TypoAN1'};  %{'INT20_t00215_new3'};%{'TypoAN1'}; 
 pic_type = 'png';
 scale_mesh = false; 
 add_boundary = 0; % 0 with adding any boundary condition 
