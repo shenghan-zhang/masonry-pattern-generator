@@ -1,12 +1,20 @@
+% This file takes a geo file and add the loading braket faciltating the FEM analysis. 
+% The current code adds two loading bracket to the two corners, which can be can be easily modified for other loading conditions. 
+% 
+% Shenghan Zhang <shenghan.zhang@berkeley.edu>
+% EESD, EPFL
+
+
 function main
 % name_spm = {'A1', 'A2', 'A3', 'B1', 'B2', 'B3', 'C1', 'C2', 'C3', 'D1', 'D2', 'D3', 'E1', 'E2', 'E3'};
-name_spm = {'C1'};
-for i_glb = 1:length(name_spm)
-clearvars -except i_glb name_spm 
-folder_path = 'Z:\temp_pic\';
-file_name = sprintf('%smy_mesh_from_pic_%s_2.geo',folder_path,name_spm{i_glb})
-file_name_r = sprintf('%smy_mesh_from_pic_%s_r.geo',folder_path,name_spm{i_glb});
+% name_spm = {'C1'};
+% for i_glb = 1:length(name_spm)
+% clearvars -except i_glb name_spm 
+folder_path = '.\';
+file_name = sprintf('%smy_mesh_from_pic_TypoAN1_2_ms002.geo',folder_path);
+file_name_r = sprintf('%smy_mesh_from_pic_TypoAN1_2_ms002_r.geo',folder_path);
 [points, lines, line_loops, plane_surfaces, physical_surfaces, physical_lines, mesh_sizes] = readFromGmshGeo(file_name);
+mesh_sizes('h3')=0.02;
 
 %% find info about the mesh 
 x_min = min(points(:,2));
@@ -46,7 +54,7 @@ physical_surfaces('"steel"')=added_surfaces;
 writeToGmshGeo(file_name_r, points, lines, line_loops, plane_surfaces, physical_surfaces, physical_lines, mesh_sizes);
 
 end
-end
+% end
 
 function [points, lines, line_loops, plane_surfaces, physical_surfaces, physical_lines, mesh_sizes, added_surface] = addLineLoop(add_coords, points, lines, line_loops, plane_surfaces, physical_surfaces, physical_lines, mesh_sizes, match_value)
     %% initilize
